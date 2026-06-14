@@ -1,0 +1,220 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 16px;
+  /* ── Override @figma/astraui tokens ────────────────────────────────────── */
+  /* 60% sky blue surfaces */
+  --surface-bg: #EBF8FF;
+  --surface-secondary-bg: rgba(235, 248, 255, 0.5);
+  --surface-hover: #D6F1FD;
+  --surface-dark: #22222c;
+  --surface-dark-hover: #333341;
+  --surface-darkest: #1e1e1e;
+  /* 30% mauve panels */
+  --brand-secondary: #F5D4D9;
+  --brand-tertiary: #FAF0F2;
+  --brand-muted: #B5838D;
+  /* 10% lemon yellow actions */
+  --brand-primary: #F5E035;
+  --brand-hover: #E8D22A;
+  --brand-dark: #D4BF18;
+  --on-brand: #1C0A10;
+  /* text */
+  --text-primary: #0D1A22;
+  --text-secondary: rgba(13, 26, 34, 0.6);
+  --text-tertiary: rgba(13, 26, 34, 0.35);
+  --on-reverse: #EBF8FF;
+  /* borders (sky blue) */
+  --border-primary: rgba(56, 189, 248, 0.4);
+  --border-secondary: rgba(56, 189, 248, 0.2);
+  --border-selected: rgba(56, 189, 248, 0.8);
+  /* inputs */
+  --input-bg: rgba(56, 189, 248, 0.1);
+  --bg-faint: rgba(235, 248, 255, 0.5);
+  --bg-subtle: rgba(56, 189, 248, 0.1);
+  --bg-hover: rgba(56, 189, 248, 0.18);
+  /* ── Shadcn / Tailwind tokens ─────────────────────────────────────────── */
+  /* 60% Bright sky blue — large surfaces, backgrounds, borders */
+  --heading-accent: #38BDF8;
+  --heading-accent-light: rgba(56, 189, 248, 0.15);
+  --heading-accent-border: rgba(56, 189, 248, 0.4);
+  --background: #EBF8FF;
+  --foreground: #0D1A22;
+  --input: transparent;
+  --input-background: #EBF8FF;
+  --switch-background: #38BDF8;
+  --border: rgba(56, 189, 248, 0.4);
+  --ring: #F5E035;
+  --muted: #D6F1FD;
+  --muted-foreground: #1A6A8A;
+  /* 30% Mauve pinkish-brown — cards, popovers, sidebar, secondary panels */
+  --card: #F0DFE2;
+  --card-foreground: #3D1A21;
+  --popover: #F0DFE2;
+  --popover-foreground: #3D1A21;
+  --secondary: #B5838D;
+  --secondary-foreground: #ffffff;
+  /* 10% Lemon yellow — primary actions, accents, active states */
+  --primary: #F5E035;
+  --primary-foreground: #1C0A10;
+  --accent: #F5E035;
+  --accent-foreground: #1C0A10;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --chart-1: #F5E035;
+  --chart-2: #38BDF8;
+  --chart-3: #B5838D;
+  --chart-4: #F5E035;
+  --chart-5: #B5838D;
+  --radius: 0.625rem;
+  /* Sidebar: 30% mauve surfaces, 10% yellow active, 60% blue borders */
+  --sidebar: #E8D0D5;
+  --sidebar-foreground: #3D1A21;
+  --sidebar-primary: #F5E035;
+  --sidebar-primary-foreground: #1C0A10;
+  --sidebar-accent: #D6B8BE;
+  --sidebar-accent-foreground: #3D1A21;
+  --sidebar-border: rgba(56, 189, 248, 0.4);
+  --sidebar-ring: #F5E035;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /**
+  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
+  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
+  */
+
+  html {
+    font-size: var(--font-size);
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h4 {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  label {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  button {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  input {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-normal);
+    line-height: 1.5;
+  }
+}

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Blue rounded background -->
+  <rect width="32" height="32" rx="7" fill="#38BDF8"/>
+
+  <!-- Top node (yellow) -->
+  <circle cx="16" cy="8" r="3.5" fill="#F5E035"/>
+
+  <!-- Stem down from top node -->
+  <line x1="16" y1="11.5" x2="16" y2="15" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Horizontal bar -->
+  <line x1="9" y1="15" x2="23" y2="15" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Left stem down -->
+  <line x1="9" y1="15" x2="9" y2="18.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Right stem down -->
+  <line x1="23" y1="15" x2="23" y2="18.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Left bottom node (pink) -->
+  <circle cx="9" cy="22" r="3.5" fill="#B5838D"/>
+
+  <!-- Right bottom node (yellow) -->
+  <circle cx="23" cy="22" r="3.5" fill="#F5E035"/>
+</svg>

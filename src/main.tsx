@@ -1,0 +1,66 @@
+
+  import { createRoot } from "react-dom/client";
+  import App from "./app/App.tsx";
+  import "./styles/index.css";
+
+  // Set theme colors as inline styles on <html> so no injected stylesheet can override them.
+  const el = document.documentElement;
+  const vars: Record<string, string> = {
+    "--background":                  "#EBF8FF",
+    "--foreground":                  "#0D1A22",
+    "--card":                        "#F0DFE2",
+    "--card-foreground":             "#3D1A21",
+    "--popover":                     "#F0DFE2",
+    "--popover-foreground":          "#3D1A21",
+    "--primary":                     "#F5E035",
+    "--primary-foreground":          "#1C0A10",
+    "--secondary":                   "#B5838D",
+    "--secondary-foreground":        "#ffffff",
+    "--muted":                       "#D6F1FD",
+    "--muted-foreground":            "#1A6A8A",
+    "--accent":                      "#F5E035",
+    "--accent-foreground":           "#1C0A10",
+    "--destructive":                 "#d4183d",
+    "--destructive-foreground":      "#ffffff",
+    "--border":                      "rgba(56,189,248,0.4)",
+    "--input":                       "transparent",
+    "--input-background":            "#EBF8FF",
+    "--switch-background":           "#38BDF8",
+    "--ring":                        "#F5E035",
+    "--chart-1":                     "#F5E035",
+    "--chart-2":                     "#38BDF8",
+    "--chart-3":                     "#B5838D",
+    "--chart-4":                     "#F5E035",
+    "--chart-5":                     "#B5838D",
+    "--sidebar":                     "#E8D0D5",
+    "--sidebar-foreground":          "#3D1A21",
+    "--sidebar-primary":             "#F5E035",
+    "--sidebar-primary-foreground":  "#1C0A10",
+    "--sidebar-accent":              "#D6B8BE",
+    "--sidebar-accent-foreground":   "#3D1A21",
+    "--sidebar-border":              "rgba(56,189,248,0.4)",
+    "--sidebar-ring":                "#F5E035",
+    "--heading-accent":              "#38BDF8",
+    "--surface-bg":                  "#EBF8FF",
+    "--surface-hover":               "#D6F1FD",
+    "--brand-primary":               "#F5E035",
+    "--brand-hover":                 "#E8D22A",
+    "--brand-dark":                  "#D4BF18",
+    "--on-brand":                    "#1C0A10",
+    "--brand-secondary":             "#F5D4D9",
+    "--brand-tertiary":              "#FAF0F2",
+    "--brand-muted":                 "#B5838D",
+    "--text-primary":                "#0D1A22",
+    "--text-secondary":              "rgba(13,26,34,0.6)",
+    "--text-tertiary":               "rgba(13,26,34,0.35)",
+    "--border-primary":              "rgba(56,189,248,0.4)",
+    "--border-secondary":            "rgba(56,189,248,0.2)",
+    "--border-selected":             "rgba(56,189,248,0.8)",
+    "--input-bg":                    "rgba(56,189,248,0.1)",
+    "--bg-faint":                    "rgba(235,248,255,0.5)",
+    "--bg-subtle":                   "rgba(56,189,248,0.1)",
+    "--bg-hover":                    "rgba(56,189,248,0.18)",
+  };
+  Object.entries(vars).forEach(([k, v]) => el.style.setProperty(k, v));
+
+  createRoot(document.getElementById("root")!).render(<App />);
