@@ -6,7 +6,7 @@ export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   try {
     const response = await notion.search({
-      filter: { value: "database", property: "object" },
+      filter: { value: "data_source", property: "object" },
     });
     return res.json(response.results.map((db: any) => ({
       id: db.id,
