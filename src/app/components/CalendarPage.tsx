@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CalendarRange, Home, Accessibility, MousePointerClick, Check } from "lucide-react";
+import { CalendarRange, Home, Accessibility, MousePointerClick, Check, Loader2 } from "lucide-react";
 
 // ── Topic data ────────────────────────────────────────────────────────────────
 
@@ -463,27 +463,30 @@ function Legend() {
 export function CalendarPage() {
   const isReadOnly = !new URLSearchParams(window.location.search).has("edit");
 
-  const [checked, setChecked] = useState<boolean[]>(() => {
-    try {
-      const saved = localStorage.getItem(STATE_KEY);
-      if (saved) return decodeState(saved);
-    } catch {}
-    return initState();
-  });
+  const [checked, setChecked] = useState<boolean[]>(initState);
+  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
-    if (!isReadOnly) {
-      try {
-        localStorage.setItem(STATE_KEY, encodeState(checked));
-      } catch {}
-    }
-  }, [checked, isReadOnly]);
+    fetch("/api/calendar")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.state) setChecked(decodeState(data.state));
+      })
+      .catch(() => {});
+  }, []);
 
   const toggle = (weekIndex: number, track: "ux" | "a11y" | "ixn") => {
+    if (isReadOnly) return;
     const trackIndex = track === "ux" ? 0 : track === "a11y" ? 1 : 2;
     setChecked((prev) => {
       const next = [...prev];
       next[weekIndex * TOTAL_TRACKS + trackIndex] = !next[weekIndex * TOTAL_TRACKS + trackIndex];
+      setSyncing(true);
+      fetch("/api/calendar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ state: encodeState(next) }),
+      }).finally(() => setSyncing(false));
       return next;
     });
   };
@@ -534,6 +537,11 @@ export function CalendarPage() {
             }}
           >
             {TOTAL_WEEKS} weeks · one topic per track per week · {fmt(START)} onwards
+            {syncing && (
+              <span className="inline-flex items-center gap-xs" style={{ marginLeft: 8, color: "var(--muted-foreground)", fontSize: 11 }}>
+                <Loader2 size={11} className="animate-spin" /> saving…
+              </span>
+            )}
           </p>
         </div>
       </div>
