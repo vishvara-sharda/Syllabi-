@@ -11,8 +11,8 @@ export default async function handler(req: any, res: any) {
 
   try {
     if (req.method === "GET") {
-      const response = await notion.databases.query({
-        database_id: DB,
+      const response = await notion.dataSources.query({
+        data_source_id: DB,
         sorts: [{ timestamp: "created_time", direction: "descending" }],
       });
 
