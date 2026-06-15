@@ -1,4 +1,6 @@
-import { put, list } from "@vercel/blob";
+const BIN_ID = process.env.JSONBIN_BIN_ID!;
+const API_KEY = process.env.JSONBIN_API_KEY!;
+const BASE = "https://api.jsonbin.io/v3/b";
 
 export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -8,18 +10,18 @@ export default async function handler(req: any, res: any) {
 
   try {
     if (req.method === "GET") {
-      const { blobs } = await list({ prefix: "calendar-state" });
-      if (blobs.length === 0) return res.json({ state: null });
-      const response = await fetch(blobs[0].url);
+      const response = await fetch(`${BASE}/${BIN_ID}/latest`, {
+        headers: { "X-Master-Key": API_KEY },
+      });
       const data = await response.json();
-      return res.json(data);
+      return res.json(data.record);
     }
 
     if (req.method === "POST") {
-      await put("calendar-state.json", JSON.stringify(req.body), {
-        access: "public",
-        addRandomSuffix: false,
-        contentType: "application/json",
+      await fetch(`${BASE}/${BIN_ID}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
+        body: JSON.stringify(req.body),
       });
       return res.json({ ok: true });
     }
