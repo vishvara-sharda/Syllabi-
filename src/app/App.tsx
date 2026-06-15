@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { ThemeProvider, SidebarNavigation, SidebarButton } from "@figma/astraui";
-import { Home, Accessibility, MousePointerClick, CalendarRange } from "lucide-react";
+import { Home, Accessibility, MousePointerClick, CalendarRange, BookOpen } from "lucide-react";
 import { CourseTree } from "./components/CourseTree";
 import { AccessibilityPage } from "./components/AccessibilityPage";
 import { InteractionPage } from "./components/InteractionPage";
 import { CalendarPage } from "./components/CalendarPage";
+import { ArticlesPage } from "./components/ArticlesPage";
 
-type Page = "home" | "accessibility" | "interaction" | "calendar";
+type Page = "home" | "accessibility" | "interaction" | "calendar" | "articles";
 
 export default function App() {
   const [page, setPage] = useState<Page>("home");
@@ -35,6 +36,11 @@ export default function App() {
             active={page === "calendar"}
             onClick={() => setPage("calendar")}
           />
+          <SidebarButton
+            icon={<BookOpen className="size-full" strokeWidth={1.5} />}
+            active={page === "articles"}
+            onClick={() => setPage("articles")}
+          />
         </SidebarNavigation>
 
         <main className="flex-1 overflow-hidden">
@@ -42,6 +48,7 @@ export default function App() {
           {page === "accessibility" && <AccessibilityPage />}
           {page === "interaction" && <InteractionPage />}
           {page === "calendar" && <CalendarPage />}
+          {page === "articles" && <ArticlesPage />}
         </main>
       </div>
     </ThemeProvider>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CalendarRange, Home, Accessibility, MousePointerClick, Check } from "lucide-react";
 
 // ── Topic data ────────────────────────────────────────────────────────────────
@@ -73,7 +73,33 @@ const INTERACTION_TOPICS_RAW = [
 ];
 
 const TOTAL_WEEKS = 26;
+const TOTAL_TRACKS = 3;
+const STATE_KEY = "calendar-checked";
 const START = new Date(2026, 5, 14); // June 14, 2026
+
+// ── State persistence helpers ─────────────────────────────────────────────────
+
+function initState(): boolean[] {
+  return new Array(TOTAL_WEEKS * TOTAL_TRACKS).fill(false);
+}
+
+function encodeState(state: boolean[]): string {
+  const bytes = new Uint8Array(Math.ceil(state.length / 8));
+  state.forEach((b, i) => { if (b) bytes[i >> 3] |= (1 << (i & 7)); });
+  return btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+}
+
+function decodeState(s: string): boolean[] {
+  try {
+    const padded = s.replace(/-/g, "+").replace(/_/g, "/") + "===".slice(0, (4 - s.length % 4) % 4);
+    const bytes = Uint8Array.from(atob(padded), (c) => c.charCodeAt(0));
+    const len = TOTAL_WEEKS * TOTAL_TRACKS;
+    return Array.from({ length: len }, (_, i) => !!(bytes[i >> 3] & (1 << (i & 7))));
+  } catch {
+    return initState();
+  }
+}
 
 // ── Stretch helper ─────────────────────────────────────────────────────────────
 
@@ -106,7 +132,7 @@ function monthLabel(d: Date): string {
 // ── Build week entries ─────────────────────────────────────────────────────────
 
 interface WeekEntry {
-  index: number; // 0-based
+  index: number;
   start: Date;
   end: Date;
   ux: string;
@@ -182,10 +208,11 @@ interface TrackPillProps {
   track: typeof TRACK_UX;
   topic: string;
   checked: boolean;
-  onToggle: () => void;
+  onToggle?: () => void;
 }
 
 function TrackPill({ track, topic, checked, onToggle }: TrackPillProps) {
+  const readOnly = !onToggle;
   return (
     <div
       className="flex items-start gap-sm rounded-[var(--radius-md)]"
@@ -198,7 +225,7 @@ function TrackPill({ track, topic, checked, onToggle }: TrackPillProps) {
     >
       {/* Checkbox */}
       <button
-        onClick={onToggle}
+        onClick={readOnly ? undefined : onToggle}
         className="shrink-0 flex items-center justify-center rounded"
         style={{
           width: 14,
@@ -207,8 +234,9 @@ function TrackPill({ track, topic, checked, onToggle }: TrackPillProps) {
           flexShrink: 0,
           border: checked ? "none" : `1.5px solid ${track.color}`,
           backgroundColor: checked ? track.color : "transparent",
-          cursor: "pointer",
+          cursor: readOnly ? "default" : "pointer",
           transition: "background-color 0.15s ease, border-color 0.15s ease",
+          pointerEvents: readOnly ? "none" : "auto",
         }}
       >
         {checked && <Check size={9} strokeWidth={3} style={{ color: "#fff" }} />}
@@ -255,14 +283,13 @@ function TrackPill({ track, topic, checked, onToggle }: TrackPillProps) {
 
 interface WeekCardProps {
   entry: WeekEntry;
+  checked: { ux: boolean; a11y: boolean; ixn: boolean };
+  onToggle?: (track: "ux" | "a11y" | "ixn") => void;
 }
 
-function WeekCard({ entry }: WeekCardProps) {
+function WeekCard({ entry, checked, onToggle }: WeekCardProps) {
   const { index, start, end, ux, a11y, ixn } = entry;
   const weekNum = index + 1;
-  const [checked, setChecked] = useState({ ux: false, a11y: false, ixn: false });
-  const toggle = (key: keyof typeof checked) =>
-    setChecked((prev) => ({ ...prev, [key]: !prev[key] }));
 
   return (
     <div
@@ -281,7 +308,6 @@ function WeekCard({ entry }: WeekCardProps) {
           backgroundColor: "var(--card)",
         }}
       >
-        {/* Week badge */}
         <span
           className="shrink-0 flex items-center justify-center rounded-[var(--radius-sm)]"
           style={{
@@ -297,7 +323,6 @@ function WeekCard({ entry }: WeekCardProps) {
           W{weekNum}
         </span>
 
-        {/* Date range */}
         <span
           style={{
             color: "var(--foreground)",
@@ -309,7 +334,6 @@ function WeekCard({ entry }: WeekCardProps) {
           {fmt(start)} – {fmt(end)}
         </span>
 
-        {/* Week number label right-aligned */}
         <span
           className="ml-auto shrink-0"
           style={{
@@ -327,9 +351,9 @@ function WeekCard({ entry }: WeekCardProps) {
         className="flex flex-col gap-sm"
         style={{ padding: "var(--space-lg) var(--space-xl)" }}
       >
-        <TrackPill track={TRACK_UX}   topic={ux}   checked={checked.ux}   onToggle={() => toggle("ux")} />
-        <TrackPill track={TRACK_A11Y} topic={a11y} checked={checked.a11y} onToggle={() => toggle("a11y")} />
-        <TrackPill track={TRACK_IXN}  topic={ixn}  checked={checked.ixn}  onToggle={() => toggle("ixn")} />
+        <TrackPill track={TRACK_UX}   topic={ux}   checked={checked.ux}   onToggle={onToggle ? () => onToggle("ux")   : undefined} />
+        <TrackPill track={TRACK_A11Y} topic={a11y} checked={checked.a11y} onToggle={onToggle ? () => onToggle("a11y") : undefined} />
+        <TrackPill track={TRACK_IXN}  topic={ixn}  checked={checked.ixn}  onToggle={onToggle ? () => onToggle("ixn")  : undefined} />
       </div>
     </div>
   );
@@ -338,16 +362,17 @@ function WeekCard({ entry }: WeekCardProps) {
 interface MonthSectionProps {
   group: MonthGroup;
   colorIndex: number;
+  allChecked: boolean[];
+  onToggle?: (weekIndex: number, track: "ux" | "a11y" | "ixn") => void;
 }
 
-function MonthSection({ group, colorIndex }: MonthSectionProps) {
+function MonthSection({ group, colorIndex, allChecked, onToggle }: MonthSectionProps) {
   const accent = MONTH_COLORS[colorIndex % MONTH_COLORS.length];
   const firstWeek = group.weeks[0].index + 1;
   const lastWeek = group.weeks[group.weeks.length - 1].index + 1;
 
   return (
     <div className="flex flex-col gap-md">
-      {/* Month header */}
       <div className="flex items-center gap-md" style={{ marginBottom: 4 }}>
         <div
           className="shrink-0 rounded-[var(--radius-sm)]"
@@ -373,11 +398,23 @@ function MonthSection({ group, colorIndex }: MonthSectionProps) {
         </div>
       </div>
 
-      {/* Week cards */}
       <div className="flex flex-col gap-sm">
-        {group.weeks.map((w) => (
-          <WeekCard key={w.index} entry={w} />
-        ))}
+        {group.weeks.map((w) => {
+          const base = w.index * TOTAL_TRACKS;
+          const checked = {
+            ux:   allChecked[base + 0],
+            a11y: allChecked[base + 1],
+            ixn:  allChecked[base + 2],
+          };
+          return (
+            <WeekCard
+              key={w.index}
+              entry={w}
+              checked={checked}
+              onToggle={onToggle ? (track) => onToggle(w.index, track) : undefined}
+            />
+          );
+        })}
       </div>
     </div>
   );
@@ -424,11 +461,38 @@ function Legend() {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export function CalendarPage() {
+  const isReadOnly = !new URLSearchParams(window.location.search).has("edit");
+
+  const [checked, setChecked] = useState<boolean[]>(() => {
+    try {
+      const saved = localStorage.getItem(STATE_KEY);
+      if (saved) return decodeState(saved);
+    } catch {}
+    return initState();
+  });
+
+  useEffect(() => {
+    if (!isReadOnly) {
+      try {
+        localStorage.setItem(STATE_KEY, encodeState(checked));
+      } catch {}
+    }
+  }, [checked, isReadOnly]);
+
+  const toggle = (weekIndex: number, track: "ux" | "a11y" | "ixn") => {
+    const trackIndex = track === "ux" ? 0 : track === "a11y" ? 1 : 2;
+    setChecked((prev) => {
+      const next = [...prev];
+      next[weekIndex * TOTAL_TRACKS + trackIndex] = !next[weekIndex * TOTAL_TRACKS + trackIndex];
+      return next;
+    });
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Page header */}
       <div
-        className="shrink-0 flex items-start justify-between gap-2xl"
+        className="shrink-0 flex items-start gap-2xl"
         style={{
           padding: "var(--space-2xl)",
           paddingBottom: "var(--space-xl)",
@@ -482,7 +546,13 @@ export function CalendarPage() {
         <div className="flex flex-col gap-2xl max-w-3xl mx-auto">
           <Legend />
           {MONTH_GROUPS.map((group, i) => (
-            <MonthSection key={group.label} group={group} colorIndex={i} />
+            <MonthSection
+              key={group.label}
+              group={group}
+              colorIndex={i}
+              allChecked={checked}
+              onToggle={isReadOnly ? undefined : toggle}
+            />
           ))}
         </div>
       </div>
